@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { LogOut, UserCircle2 } from 'lucide-react';
 
 interface ChatRoomProps {
@@ -33,7 +32,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
 
-  // Always emit join_room on mount (for refresh/reconnect)
   useEffect(() => {
     if (!username || !room) return;
     const emitJoin = (pw: string) => {
@@ -49,7 +47,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
       let pw = password || (typeof window !== 'undefined' ? localStorage.getItem(`roomPassword:${room}`) : "");
       if (!pw || pw === "") {
         setLoading(true);
-        // Wait up to 1 second for localStorage to provide the password
         let waited = 0;
         const interval = setInterval(() => {
           pw = typeof window !== 'undefined' ? localStorage.getItem(`roomPassword:${room}`) : "";
@@ -61,14 +58,13 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
           } else if (waited >= 1000) {
             clearInterval(interval);
             setLoading(false);
-            onExit(); // Redirect to join page if password missing after 1s
+            onExit(); 
           }
         }, 100);
         return;
       }
       emitJoin(pw);
     }
-    // Listen for backend error and redirect if password is wrong
     const handleError = (msg: string) => {
       if (msg.toLowerCase().includes('password')) {
         onExit();
@@ -106,7 +102,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
       setUsers(userList);
     });
 
-    // Typing indicator
     socket.on('typing', (typingUsername: string) => {
       if (typingUsername !== username) {
         setTypingUser(typingUsername);
@@ -144,7 +139,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
     onExit();
   };
 
-  // Sort users so that the current user is always first
   const sortedUsers = [
     ...users.filter((u) => u === username),
     ...users.filter((u) => u !== username),
@@ -161,7 +155,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   return (
     <div className="flex flex-col md:flex-row w-full bg-gradient-to-br from-indigo-50 via-purple-50 to-blue-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 p-0 md:p-4 gap-0 md:gap-4">
       
-      {/* User List */}
       <div className="w-full md:w-[300px] flex-shrink-0 bg-white/90 dark:bg-gray-900/80 rounded-b-2xl rounded-2xl shadow-xl mb-5 md:mb-0 border border-gray-200 dark:border-gray-800 overflow-hidden mb-2 md:mb-0">
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-indigo-500 to-purple-600">
           <span className="text-white font-bold text-lg tracking-wide">Users</span>
@@ -181,7 +174,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
           </ul>
         </div>
       </div>
-      {/* Chat Area */}
       <div className="flex-grow flex flex-col h-full">
         <div className="flex flex-col h-full bg-white/90 dark:bg-gray-900/80 rounded-t-2xl md:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-2xl md:rounded-t-2xl">

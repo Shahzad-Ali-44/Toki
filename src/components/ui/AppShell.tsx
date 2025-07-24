@@ -5,7 +5,6 @@ import { Button } from "./button";
 
 
 export default function AppShell({ children }: { children: ReactNode }) {
-  // Read dark mode from localStorage or system preference
   const [dark, setDark] = useState(() => {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("darkMode");
@@ -15,7 +14,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
     return false;
   });
 
-  // Update <html> class and localStorage when dark changes
   useEffect(() => {
     if (dark) {
       document.documentElement.classList.add("dark");
@@ -25,26 +23,62 @@ export default function AppShell({ children }: { children: ReactNode }) {
     localStorage.setItem("darkMode", dark ? "true" : "false");
   }, [dark]);
 
-  // Toggle dark mode
   const toggleDark = () => {
     setDark((d) => !d);
   };
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 dark:bg-gray-950 transition-colors">
-      <header className="w-full px-4 py-3 border-b bg-white/80 dark:bg-gray-900/80 flex items-center justify-between shadow-sm">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-xl text-blue-600 tracking-tight">Chat Vibe</span>
+      <header
+        className={`
+          w-full
+          px-6
+          py-3
+          flex
+          items-center
+          justify-between
+          shadow-lg
+          rounded-b-2xl
+          border-b
+          z-20
+          backdrop-blur-md
+          ${dark
+            ? "bg-gradient-to-r from-gray-900/80 via-indigo-900/80 to-purple-900/80 border-blue-900/40"
+            : "bg-white/80 border-blue-200/40"
+          }
+        `}
+        style={{ position: "sticky", top: 0 }}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className={`
+              font-extrabold
+              text-2xl
+              tracking-tight
+              drop-shadow
+              ${dark
+                ? "bg-gradient-to-r from-blue-300 via-indigo-400 to-pink-400 bg-clip-text text-transparent"
+                : "text-indigo-700"
+              }
+            `}
+          >
+            Chat Vibe
+          </span>
         </div>
-        <Button variant="ghost" size="icon" aria-label="Toggle dark mode" onClick={toggleDark}>
-          <Sun className="h-5 w-5 dark:hidden" />
-          <Moon className="h-5 w-5 hidden dark:inline" />
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Toggle dark mode"
+          onClick={toggleDark}
+          className="hover:bg-indigo-100/40 dark:hover:bg-gray-800/40 transition"
+        >
+          <Sun className="h-6 w-6 dark:hidden text-yellow-400" />
+          <Moon className="h-6 w-6 hidden dark:inline text-indigo-200" />
         </Button>
       </header>
       <main className="flex-1 flex flex-col items-center px-4 py-8">
         {children}
       </main>
-  
     </div>
   );
 } 

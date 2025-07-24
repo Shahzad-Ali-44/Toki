@@ -10,7 +10,6 @@ import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
-  // Restore state from localStorage
   const [mode, setMode] = useState(() => localStorage.getItem("mode") || "home");
   const [roomName, setRoomName] = useState(() => localStorage.getItem("roomName") || "");
   const [username, setUsername] = useState(() => localStorage.getItem("username") || "");
@@ -19,7 +18,6 @@ function App() {
     return room ? localStorage.getItem(`roomPassword:${room}`) || "" : "";
   });
   const [isPublic, setIsPublic] = useState<boolean>(() => {
-    // Try to restore isPublic from localStorage, fallback to true
     const val = localStorage.getItem("isPublic");
     return val === null ? true : val === "true";
   });
@@ -27,7 +25,6 @@ function App() {
   const [initialUsers, setInitialUsers] = useState<string[]>([]);
   const lastCreatedRoomRef = useRef<string | null>(null);
 
-  // On mount, if mode is "chat" but required info is missing, go to home
   useEffect(() => {
     if (
       mode === "chat" &&
@@ -42,7 +39,6 @@ function App() {
     }
   }, [mode, roomName, username, isPublic, roomPassword]);
 
-  // Save state to localStorage on change
   useEffect(() => {
     localStorage.setItem("mode", mode);
     localStorage.setItem("roomName", roomName);
@@ -53,14 +49,12 @@ function App() {
     }
   }, [mode, roomName, username, roomPassword, isPublic]);
 
-  // Socket.io connection (adjust the URL/port as needed)
   const socketRef = useRef<Socket | null>(null);
   if (!socketRef.current) {
-    socketRef.current = io("http://localhost:3000"); // Change port if your server uses a different one
+    socketRef.current = io("http://localhost:3000"); 
   }
   const socket = socketRef.current;
 
-  // Determine dark mode for toastify
   const isDark = typeof window !== 'undefined' ? (localStorage.getItem("darkMode") === "true") : false;
 
   return (
@@ -119,7 +113,6 @@ function App() {
               localStorage.removeItem("roomName");
               localStorage.removeItem("username");
               localStorage.removeItem("isPublic");
-              // Optionally: localStorage.removeItem(`roomPassword:${roomName}`);
             }}
             initialMessages={initialMessages}
             initialUsers={initialUsers}

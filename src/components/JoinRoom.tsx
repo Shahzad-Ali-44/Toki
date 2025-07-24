@@ -25,7 +25,6 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
     socket.on('public_rooms', (rooms) => {
       setPublicRooms(rooms);
     });
-    // Clean up previous handlers before adding new ones
     socket.off('error');
     socket.off('message_history');
     socket.on('error', (msg) => {
@@ -36,12 +35,10 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
       } else {
         setErrors((prev) => ({ ...prev, room: msg }));
       }
-      setJoining(false); // Reset joining state on error
+      setJoining(false); 
     });
-    socket.on('message_history', (messages, ...args) => {
-      // Only call onJoin if joining is true and the username/room match
+    socket.on('message_history', (messages) => {
       if (joining && username && room) {
-        // Try to get the user list from the next update_user_list event
         let users: string[] = [];
         const handleUserList = (userList: string[]) => {
           users = userList;
@@ -57,7 +54,7 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
             users
           );
           setJoining(false);
-        }, 100); // Give a moment for update_user_list to arrive
+        }, 100); 
       }
     });
     return () => {
@@ -89,7 +86,6 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) return;
     setJoining(true);
-    // Only call onJoin after backend confirms join (see useEffect)
     if (joinType === 'public') {
       socket.emit('join_room', { username, room });
     } else {
@@ -97,7 +93,6 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
     }
   };
 
-  // Disable logic for Join button
   const joinDisabled =
     joining ||
     !username ||
