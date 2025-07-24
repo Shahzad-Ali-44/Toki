@@ -118,3 +118,30 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom scrollbar for chat message area */
+.chat-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #a78bfa #f3e8ff; /* purple-400 thumb, purple-100 track */
+}
+.chat-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 8px;
+}
+.chat-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a78bfa 0%, #818cf8 100%); /* purple-400 to indigo-400 */
+  border-radius: 8px;
+}
+.chat-scrollbar::-webkit-scrollbar-track {
+  background: #f3e8ff; /* purple-100 */
+  border-radius: 8px;
+}
+.dark .chat-scrollbar {
+  scrollbar-color: #6366f1 #312e81; /* indigo-500 thumb, indigo-900 track */
+}
+.dark .chat-scrollbar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #6366f1 0%, #a78bfa 100%); /* indigo-500 to purple-400 */
+}
+.dark .chat-scrollbar::-webkit-scrollbar-track {
+  background: #312e81; /* indigo-900 */
+}
