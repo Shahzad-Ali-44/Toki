@@ -62,7 +62,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
               }
             `}
           >
-            Chat Vibe
+            Toki
           </span>
         </div>
         <Button

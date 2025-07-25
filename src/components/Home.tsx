@@ -12,7 +12,7 @@ export default function Home({ setMode }: HomeProps) {
       <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-900/90">
         <CardHeader className="flex flex-col items-center gap-2">
           <Sparkles className="h-12 w-12 text-blue-500 mb-2" />
-          <CardTitle className="text-3xl font-bold text-center">Welcome to Chat Vibe</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center">Welcome to Toki</CardTitle>
           <CardDescription className="text-center text-gray-500 dark:text-gray-400">
             Effortless real-time chat. Create or join a room to get started!
           </CardDescription>
