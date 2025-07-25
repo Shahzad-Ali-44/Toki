@@ -51,7 +51,7 @@ function App() {
 
   const socketRef = useRef<Socket | null>(null);
   if (!socketRef.current) {
-    socketRef.current = io("http://localhost:3000"); 
+    socketRef.current = io(import.meta.env.VITE_BACKEND_URI); 
   }
   const socket = socketRef.current;
 
