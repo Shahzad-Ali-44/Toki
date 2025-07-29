@@ -178,7 +178,12 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
         <div className="flex flex-col h-full bg-white/90 dark:bg-gray-900/80 rounded-t-2xl md:rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800">
           <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-800 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-t-2xl md:rounded-t-2xl">
             <span className="text-white font-bold text-lg tracking-wide">{room}</span>
-            <Button size="sm" variant="destructive" className="hidden md:flex items-center gap-2" onClick={handleExit}>
+            <Button 
+              size="sm" 
+              variant="outline" 
+              className="hidden md:flex items-center gap-2 bg-red-600 hover:bg-red-600 text-white border-red-500 hover:border-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 font-medium" 
+              onClick={handleExit}
+            >
               <LogOut className="h-4 w-4" />
               Exit Room
             </Button>

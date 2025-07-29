@@ -8,8 +8,8 @@ interface HomeProps {
 
 export default function Home({ setMode }: HomeProps) {
   return (
-    <div className="w-full max-w-md">
-      <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-900/90">
+    <div className="w-full max-w-md mx-auto flex items-center justify-center min-h-[calc(100vh-200px)]">
+      <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-900/90 w-full">
         <CardHeader className="flex flex-col items-center gap-2">
           <Sparkles className="h-12 w-12 text-blue-500 mb-2" />
           <CardTitle className="text-3xl font-bold text-center">Welcome to Toki</CardTitle>
