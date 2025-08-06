@@ -59,8 +59,8 @@ A modern, responsive real-time chat application built with React, TypeScript, an
 
 1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/toki-frontend.git
-cd toki-frontend
+git clone https://github.com/Shahzad-Ali-44/Toki.git
+cd Toki
 ```
 
 2. **Install dependencies**
