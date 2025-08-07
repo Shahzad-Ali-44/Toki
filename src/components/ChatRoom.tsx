@@ -265,17 +265,17 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
               <div ref={messagesEndRef} />
             </div>
           </div>
-          <div className="p-3 md:p-6 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-gray-800 dark:to-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-center rounded-b-2xl">
+          <div className="p-3 md:p-6 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 flex justify-center rounded-b-2xl">
             <form className="flex gap-2 w-full max-w-2xl" onSubmit={sendMessage}>
               <Input
                 ref={inputRef}
                 value={newMessage}
                 onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
                 placeholder="Type a message..."
-                className="rounded-full px-5 py-2 shadow text-xs md:text-base border-2 border-indigo-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 bg-white dark:bg-gray-900 transition-all"
+                className="rounded-lg px-5 py-2 shadow text-xs md:text-base border-2 border-indigo-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 bg-white dark:bg-gray-900 transition-all"
                 autoComplete="off"
               />
-              <Button type="submit" className="rounded-full px-6 shadow bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs md:text-base font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">Send</Button>
+              <Button type="submit" className="rounded-lg px-6 shadow bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs md:text-base font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">Send</Button>
             </form>
           </div>
         </div>
