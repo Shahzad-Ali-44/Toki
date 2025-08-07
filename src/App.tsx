@@ -23,6 +23,7 @@ function App() {
   });
   const [initialMessages, setInitialMessages] = useState<any[]>([]);
   const [initialUsers, setInitialUsers] = useState<string[]>([]);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const lastCreatedRoomRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -49,13 +50,24 @@ function App() {
     }
   }, [mode, roomName, username, roomPassword, isPublic]);
 
-  const socketRef = useRef<Socket | null>(null);
-  if (!socketRef.current) {
-    socketRef.current = io(import.meta.env.VITE_BACKEND_URI); 
-  }
-  const socket = socketRef.current;
+  useEffect(() => {
+    const newSocket = io(import.meta.env.VITE_BACKEND_URI);
+    setSocket(newSocket);
+    
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
 
   const isDark = typeof window !== 'undefined' ? (localStorage.getItem("darkMode") === "true") : false;
+
+  if (!socket) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg font-semibold text-gray-600 dark:text-gray-300 animate-pulse">Connecting...</div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -89,7 +101,7 @@ function App() {
               setIsPublic(isPublicRoom !== false);
               setInitialMessages(messages || []);
               setInitialUsers(users || []);
-              setMode("chat"); // <--- Ensure mode is set to "chat" on join
+              setMode("chat"); 
               if (password) {
                 localStorage.setItem(`roomPassword:${room}`, password);
               }
