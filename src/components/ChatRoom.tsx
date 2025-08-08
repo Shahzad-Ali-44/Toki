@@ -33,21 +33,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const typingTimeout = useRef<NodeJS.Timeout | null>(null);
-  const [shouldAutoScroll, setShouldAutoScroll] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  
-  const isAtBottom = () => {
-    if (!messagesContainerRef.current) return true;
-    const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
-    return scrollTop + clientHeight >= scrollHeight - 10;
-  };
-  
-  const handleScroll = () => {
-    if (!isInitialLoad) {
-      setShouldAutoScroll(isAtBottom());
-    }
-  };
 
   
   const scrollToBottom = () => {
@@ -104,11 +90,17 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   useEffect(() => {
     socket.on('receive_message', (message: Message) => {
       setMessages((prev) => [...prev, { ...message, type: 'message' }]);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
     });
 
     socket.on('message_history', (history: Message[]) => {
       setMessages(history.map(m => ({ ...m, type: 'message' })));
       setIsInitialLoad(false);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 100);
     });
 
     socket.on('notification', (notification: string) => {
@@ -121,6 +113,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
           type: 'notification',
         },
       ]);
+      setTimeout(() => {
+        scrollToBottom();
+      }, 50);
     });
 
     socket.on('update_user_list', (userList: string[]) => {
@@ -145,17 +140,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   }, [socket, username]);
  
   useEffect(() => {
-    if (shouldAutoScroll && !isInitialLoad) {
+    if (!isInitialLoad) {
       scrollToBottom();
     }
-  }, [messages, shouldAutoScroll, isInitialLoad]);
+  }, [messages, isInitialLoad]);
 
   const sendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (newMessage.trim()) {
       socket.emit('send_message', newMessage);
       setNewMessage('');
-      setShouldAutoScroll(true);
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
@@ -222,7 +216,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
           </div>
           <div 
             ref={messagesContainerRef}
-            onScroll={handleScroll}
             className="flex-1 overflow-y-auto max-h-[60vh] md:max-h-[calc(100vh-200px)] px-2 md:px-6 py-4 md:py-6 bg-transparent chat-scrollbar rounded-2xl"
           >
             <div className="space-y-4">

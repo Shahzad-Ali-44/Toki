@@ -125,6 +125,9 @@ function App() {
               localStorage.removeItem("roomName");
               localStorage.removeItem("username");
               localStorage.removeItem("isPublic");
+              if (roomName) {
+                localStorage.removeItem(`roomPassword:${roomName}`);
+              }
             }}
             initialMessages={initialMessages}
             initialUsers={initialUsers}
