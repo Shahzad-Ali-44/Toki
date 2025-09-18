@@ -80,7 +80,7 @@ function App() {
               setMode("home");
               setIsPublic(room.isPublic !== false);
               if (lastCreatedRoomRef.current !== room.name) {
-                toast.success(`Room "${room.name}" created successfully!`, {
+                toast.success(`Room ${room.name} created successfully!`, {
                   theme: isDark ? "dark" : "light",
                   position: "top-right",
                   autoClose: 3000,
