@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { LogOut, UserCircle2 } from 'lucide-react';
+import { LogOut, UserCircle2, Edit2, Trash2, X } from 'lucide-react';
 
 interface ChatRoomProps {
   socket: Socket;
@@ -19,6 +19,9 @@ interface Message {
   text: string;
   username: string;
   timestamp: string;
+  messageId?: string;
+  isEdited?: boolean;
+  editedAt?: string;
   type?: 'message' | 'notification';
 }
 
@@ -29,6 +32,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [password] = useState<string>(initialPassword || "");
   const [loading, setLoading] = useState(false);
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+  const [contextMenu, setContextMenu] = useState<{x: number, y: number, messageId: string} | null>(null);
+  const [deleteModal, setDeleteModal] = useState<{messageId: string, messageText: string} | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -130,12 +136,28 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
       }
     });
 
+    socket.on('message_edited', (editedMessage: Message) => {
+      setMessages((prev) => 
+        prev.map((msg) => 
+          msg.messageId === editedMessage.messageId 
+            ? { ...msg, text: editedMessage.text, timestamp: editedMessage.timestamp, isEdited: editedMessage.isEdited, editedAt: editedMessage.editedAt }
+            : msg
+        )
+      );
+    });
+
+    socket.on('message_deleted', ({ messageId }: { messageId: string }) => {
+      setMessages((prev) => prev.filter((msg) => msg.messageId !== messageId));
+    });
+
     return () => {
       socket.off('receive_message');
       socket.off('message_history');
       socket.off('notification');
       socket.off('update_user_list');
       socket.off('typing');
+      socket.off('message_edited');
+      socket.off('message_deleted');
     };
   }, [socket, username]);
  
@@ -145,10 +167,28 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
     }
   }, [messages, isInitialLoad]);
 
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (contextMenu) {
+        closeContextMenu();
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [contextMenu]);
+
   const sendMessage = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     if (newMessage.trim()) {
-      socket.emit('send_message', newMessage);
+      if (editingMessageId) {
+        socket.emit('edit_message', { messageId: editingMessageId, newText: newMessage });
+        setEditingMessageId(null);
+      } else {
+        socket.emit('send_message', newMessage);
+      }
       setNewMessage('');
       setTimeout(() => {
         inputRef.current?.focus();
@@ -163,6 +203,74 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
   const handleExit = () => {
     socket.emit('leave_room');
     onExit();
+  };
+
+  const handleEditMessage = (messageId: string, currentText: string) => {
+    setEditingMessageId(messageId);
+    setNewMessage(currentText);
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 100);
+  };
+
+
+  const handleCancelEdit = () => {
+    setEditingMessageId(null);
+    setNewMessage('');
+  };
+
+  const handleDeleteMessage = (messageId: string) => {
+    const message = messages.find(msg => msg.messageId === messageId);
+    if (message) {
+      setDeleteModal({
+        messageId: messageId,
+        messageText: message.text
+      });
+    }
+  };
+
+  const confirmDelete = () => {
+    if (deleteModal) {
+      socket.emit('delete_message', { messageId: deleteModal.messageId });
+      setDeleteModal(null);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteModal(null);
+  };
+
+  const handleMessageContextMenu = (e: React.MouseEvent, messageId: string) => {
+    e.preventDefault();
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      messageId
+    });
+  };
+
+  const handleLongPress = (messageId: string) => {
+    setContextMenu({
+      x: window.innerWidth / 2,
+      y: window.innerHeight / 2,
+      messageId
+    });
+  };
+
+  const closeContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const handleContextMenuAction = (action: 'edit' | 'delete', messageId: string) => {
+    const message = messages.find(msg => msg.messageId === messageId);
+    if (!message) return;
+
+    if (action === 'edit') {
+      handleEditMessage(messageId, message.text);
+    } else if (action === 'delete') {
+      handleDeleteMessage(messageId);
+    }
+    closeContextMenu();
   };
 
   const sortedUsers = [
@@ -232,21 +340,44 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
                 ) : (
                   <div
                     key={index}
-                    className={`flex ${msg.username === username ? 'justify-end' : 'justify-start'}`}
+                    className={`flex flex-col ${msg.username === username ? 'items-end' : 'items-start'}`}
                   >
                     <div
-                      className={`relative p-3 rounded-2xl max-w-[85%] md:max-w-[70%] break-words shadow-lg text-xs md:text-base transition-all ${
+                      className={`relative p-3 rounded-2xl max-w-[85%] md:max-w-[70%] break-words shadow-lg text-xs md:text-base transition-all cursor-pointer ${
                         msg.username === username
                           ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
                           : 'bg-gray-200 dark:bg-gray-700'
                       }`}
+                      onContextMenu={(e) => msg.username === username && msg.messageId && handleMessageContextMenu(e, msg.messageId)}
+                      onTouchStart={() => {
+                        if (msg.username === username && msg.messageId) {
+                          const timer = setTimeout(() => {
+                            handleLongPress(msg.messageId!);
+                          }, 500);
+                          const cleanup = () => clearTimeout(timer);
+                          document.addEventListener('touchend', cleanup, { once: true });
+                          document.addEventListener('touchmove', cleanup, { once: true });
+                        }
+                      }}
                     >
                       <span className="block font-semibold mb-1 text-xs md:text-sm opacity-80">{msg.username}</span>
                       <span className="block mb-1">{msg.text}</span>
-                      <span className="block text-[10px] md:text-xs text-right opacity-60 mt-1">
-                        {new Date(msg.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
-                      </span>
+                      
+                      <div className="flex items-center justify-end gap-1 mt-1">
+                        <span className="text-[10px] md:text-xs opacity-60">
+                          {msg.isEdited && msg.editedAt 
+                            ? new Date(msg.editedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                            : new Date(msg.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                          }
+                        </span>
+                        {msg.isEdited && (
+                          <span className="text-[10px] md:text-xs opacity-60 italic">
+                            • Edited
+                          </span>
+                        )}
+                      </div>
                     </div>
+
                   </div>
                 )
               )}
@@ -264,15 +395,90 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
                 ref={inputRef}
                 value={newMessage}
                 onChange={(e) => { setNewMessage(e.target.value); handleTyping(); }}
-                placeholder="Type a message..."
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape' && editingMessageId) {
+                    handleCancelEdit();
+                  }
+                }}
+                placeholder={editingMessageId ? "Edit your message..." : "Type a message..."}
                 className="rounded-lg px-5 py-2 shadow text-xs md:text-base border-2 border-indigo-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 bg-white dark:bg-gray-900 transition-all"
                 autoComplete="off"
               />
-              <Button type="submit" className="rounded-lg px-6 shadow bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs md:text-base font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">Send</Button>
+              {editingMessageId && (
+                <Button
+                  type="button"
+                  onClick={handleCancelEdit}
+                  className="rounded-lg px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-xs md:text-base font-semibold transition-all"
+                >
+                  Cancel
+                </Button>
+              )}
+              <Button type="submit" className="rounded-lg px-6 shadow bg-gradient-to-r from-indigo-500 to-purple-600 text-white text-xs md:text-base font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all">
+                {editingMessageId ? 'Update' : 'Send'}
+              </Button>
             </form>
           </div>
         </div>
       </div>
+
+      {contextMenu && (
+        <div
+          className="fixed z-50 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 py-2 min-w-[120px]"
+          style={{
+            left: Math.min(contextMenu.x, window.innerWidth - 150),
+            top: Math.min(contextMenu.y, window.innerHeight - 100),
+          }}
+        >
+          <button
+            onClick={() => handleContextMenuAction('edit', contextMenu.messageId)}
+            className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+          >
+            <Edit2 className="h-4 w-4" />
+            Edit
+          </button>
+          <button
+            onClick={() => handleContextMenuAction('delete', contextMenu.messageId)}
+            className="w-full px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete
+          </button>
+        </div>
+      )}
+
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 p-6 max-w-sm w-full mx-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-red-100 dark:bg-red-900 rounded-full">
+                <Trash2 className="h-6 w-6 text-red-600 dark:text-red-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Delete Message
+              </h3>
+            </div>
+            
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
+              Are you sure you want to delete this message?
+            </p>
+            
+            <div className="flex gap-3 justify-end">
+              <Button
+                onClick={cancelDelete}
+                className="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-500 rounded-lg font-medium transition-all"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg font-medium transition-all"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
