@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Socket } from 'socket.io-client';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
-import { LogOut, UserCircle2, Edit2, Trash2, X } from 'lucide-react';
+import { LogOut, UserCircle2, Edit2, Trash2} from 'lucide-react';
 
 interface ChatRoomProps {
   socket: Socket;
@@ -166,6 +166,19 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
       scrollToBottom();
     }
   }, [messages, isInitialLoad]);
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = 0;
+    }
+  }, [room]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = 0;
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = () => {

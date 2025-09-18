@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, MessageCircle, Github, Twitter, Mail, Code } from 'lucide-react';
+import { Sparkles, Github, Twitter, Mail, Code } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -11,14 +11,23 @@ const Footer: React.FC = () => {
           
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
-                <MessageCircle className="h-5 w-5 text-white" />
+              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-gray-800/80 to-gray-900/80 border border-gray-700/50 shadow-lg">
+                <img 
+                  src="/favicon.ico" 
+                  alt="Toki Logo" 
+                  className="h-8 w-8 object-contain"
+                />
               </div>
-              <div>
-                <h3 className="font-bold text-xl bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
-                  Toki
-                </h3>
-                <p className="text-sm text-gray-400">Real-time Chat Platform</p>
+              <div className="flex flex-col">
+                <div className="flex items-center gap-2">
+                  <span className="font-black text-3xl tracking-tight drop-shadow-lg bg-gradient-to-r from-blue-300 via-indigo-400 to-pink-400 bg-clip-text text-transparent">
+                    Toki
+                  </span>
+                  <Sparkles className="h-5 w-5 text-pink-400 animate-pulse" />
+                </div>
+                <span className="text-xs font-medium text-gray-300 tracking-wide">
+                  Real-time Chat Platform
+                </span>
               </div>
             </div>
             <p className="text-gray-300 text-sm leading-relaxed max-w-md">

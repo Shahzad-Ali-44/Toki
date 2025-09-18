@@ -4,6 +4,7 @@ import { Label } from './ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Socket } from 'socket.io-client';
 import { useState, useEffect } from "react";
+import { LogIn, Lock, ArrowLeft, Globe } from 'lucide-react';
 
 interface JoinRoomProps {
   socket: Socket;
@@ -99,49 +100,72 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
     (joinType === 'public' ? !room : !room || !password);
 
   return (
-    <div className="w-full max-w-md mx-auto flex items-center justify-center min-h-[calc(100vh-200px)]">
-      <Card className="shadow-2xl border-0 bg-white/90 dark:bg-gray-900/90 w-full">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Join a Room</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+    <div className="w-full max-w-2xl mx-auto flex items-center justify-center min-h-[calc(100vh-200px)] p-4">
+      <div className="w-full">
+        <Card className="shadow-2xl border-0 bg-white/95 dark:bg-gray-900/95 w-full backdrop-blur-sm">
+          <CardHeader className="flex flex-col items-center gap-4 text-center pb-8">
+            
+            
+            <div>
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                Join Room
+              </CardTitle>
+              <p className="text-gray-600 dark:text-gray-300">
+                Enter your details to join a chat room
+              </p>
+            </div>
+          </CardHeader>
+          <CardContent className="px-8 pb-8">
+              <div className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="username">Your Name</Label>
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Your Name</Label>
               <Input
                 id="username"
                 placeholder="Enter your name"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="on"
-                className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900"
+                    className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 transition-all duration-300"
               />
               {errors.username && (
-                <div className="text-red-500 text-xs mt-1">{errors.username}</div>
+                    <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                      <span>⚠️</span>
+                      {errors.username}
+                    </div>
               )}
             </div>
 
-            <div className="flex gap-2 mb-4">
+                <div className="flex gap-3">
               <Button 
                 variant={joinType === 'public' ? 'default' : 'outline'} 
                 onClick={() => setJoinType('public')}
-                className={`flex-1 ${joinType === 'public' ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700' : ''}`}
-              >
-                Join Public Room
+                    className={`flex-1 flex items-center gap-2 h-12 font-semibold transition-all duration-300 ${
+                      joinType === 'public' 
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg' 
+                        : 'border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <Globe className="h-4 w-4" />
+                    Public Room
               </Button>
               <Button 
                 variant={joinType === 'private' ? 'default' : 'outline'} 
                 onClick={() => setJoinType('private')}
-                className={`flex-1 ${joinType === 'private' ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700' : ''}`}
-              >
-                Join Private Room
+                    className={`flex-1 flex items-center gap-2 h-12 font-semibold transition-all duration-300 ${
+                      joinType === 'private' 
+                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg' 
+                        : 'border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                    }`}
+                  >
+                    <Lock className="h-4 w-4" />
+                    Private Room
               </Button>
             </div>
 
             {joinType === 'public' ? (
               <div className="space-y-2">
-                <Label>Select a Public Room</Label>
-                <div className="flex flex-col gap-2 max-h-48 overflow-y-auto chat-scrollbar rounded-lg p-1" style={{ overflowX: 'hidden' }}>
+                    <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Select a Public Room</Label>
+                    <div className="flex flex-col gap-2 max-h-48 overflow-y-auto chat-scrollbar rounded-lg p-1 border border-gray-200 dark:border-gray-700" style={{ overflowX: 'hidden' }}>
                   {publicRooms.length === 0 ? (
                     <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 py-6">
                       <span className="text-3xl mb-2">😕</span>
@@ -152,7 +176,7 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
                       <div
                         key={r.name}
                         className={`flex items-center gap-3 cursor-pointer rounded-lg px-4 py-3 border transition-all shadow-sm
-                          ${room === r.name ? 'bg-gradient-to-r from-purple-500 to-blue-400 text-white border-transparent' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 hover:bg-purple-50 dark:hover:bg-gray-600'}
+                              ${room === r.name ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-transparent' : 'bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 border-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-600'}
                         `}
                         onClick={() => setRoom(room === r.name ? '' : r.name)}
                         style={{ userSelect: 'none', width: '100%' }}
@@ -166,7 +190,7 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
                           value={r.name}
                           checked={room === r.name}
                           readOnly
-                          className="form-radio h-5 w-5 text-purple-600 accent-purple-600 pointer-events-none"
+                              className="form-radio h-5 w-5 text-indigo-600 accent-indigo-600 pointer-events-none"
                           style={{ minWidth: 20 }}
                           tabIndex={-1}
                         />
@@ -187,21 +211,24 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
             ) : (
               <>
                 <div className="space-y-2">
-                  <Label htmlFor="room">Room Name</Label>
+                      <Label htmlFor="room" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Room Name</Label>
                   <Input
                     id="room"
                     placeholder="Enter the room name"
                     value={room}
                     onChange={(e) => setRoom(e.target.value)}
                     autoComplete="on"
-                    className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900"
+                        className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 transition-all duration-300"
                   />
                   {errors.room && (
-                    <div className="text-red-500 text-xs mt-1">{errors.room}</div>
+                        <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                          <span>⚠️</span>
+                          {errors.room}
+                        </div>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
+                      <Label htmlFor="password" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -209,30 +236,40 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="on"
-                    className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900"
+                        className="border-2 border-gray-200 dark:border-gray-700 focus:border-indigo-400 focus:ring-2 focus:ring-indigo-200 dark:focus:border-indigo-400 dark:focus:ring-indigo-900 transition-all duration-300"
                   />
                   {errors.password && (
-                    <div className="text-red-500 text-xs mt-1">{errors.password}</div>
+                        <div className="text-red-500 text-xs mt-1 flex items-center gap-1">
+                          <span>⚠️</span>
+                          {errors.password}
+                        </div>
                   )}
                 </div>
               </>
             )}
 
-            <div className="flex justify-between pt-2">
-              <Button variant="outline" onClick={onBack} className="flex-1 mr-2">
+                <div className="flex gap-3 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={onBack} 
+                    className="flex-1 flex items-center gap-2 h-12 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-300"
+                  >
+                    <ArrowLeft className="h-4 w-4" />
                 Back
               </Button>
               <Button 
                 onClick={handleJoin} 
                 disabled={joinDisabled}
-                className="flex-1 ml-2 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50"
+                    className="flex-1 flex items-center gap-2 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
               >
-                {joining ? 'Joining...' : 'Join'}
+                    <LogIn className="h-4 w-4" />
+                    {joining ? 'Joining...' : 'Join Room'}
               </Button>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
