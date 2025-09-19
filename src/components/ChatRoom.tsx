@@ -291,6 +291,112 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
     ...users.filter((u) => u !== username),
   ];
 
+  const formatDate = (date: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    const messageDate = new Date(date);
+    const messageDateStr = messageDate.toDateString();
+    const todayStr = today.toDateString();
+    const yesterdayStr = yesterday.toDateString();
+    
+    if (messageDateStr === todayStr) {
+      return 'Today';
+    } else if (messageDateStr === yesterdayStr) {
+      return 'Yesterday';
+    } else {
+      return messageDate.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      });
+    }
+  };
+
+  const isSameDay = (date1: Date, date2: Date) => {
+    return date1.toDateString() === date2.toDateString();
+  };
+
+  const renderMessagesWithDates = () => {
+    if (messages.length === 0) return null;
+
+    const result: React.ReactElement[] = [];
+    let lastMessageDate: Date | null = null;
+
+    messages.forEach((msg, index) => {
+      const messageDate = new Date(msg.timestamp);
+      
+      
+      if (!lastMessageDate || !isSameDay(lastMessageDate, messageDate)) {
+        result.push(
+          <div key={`date-${index}`} className="flex justify-center my-4">
+            <div className="bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 px-3 py-1 rounded-full text-xs font-medium">
+              {formatDate(messageDate)}
+            </div>
+          </div>
+        );
+        lastMessageDate = messageDate;
+      }
+
+      if (msg.type === 'notification') {
+        result.push(
+          <div key={index} className="flex justify-center">
+            <div className="bg-gradient-to-r from-indigo-200 to-purple-200 dark:from-gray-700 dark:to-gray-800 text-indigo-700 dark:text-gray-200 px-4 py-2 rounded-full text-xs md:text-sm font-medium shadow">
+              {msg.text}
+            </div>
+          </div>
+        );
+      } else {
+        result.push(
+          <div
+            key={index}
+            className={`flex flex-col ${msg.username === username ? 'items-end' : 'items-start'}`}
+          >
+            <div
+              className={`relative p-3 rounded-2xl max-w-[85%] md:max-w-[70%] break-words shadow-lg text-xs md:text-base transition-all cursor-pointer ${
+                msg.username === username
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
+                  : 'bg-gray-200 dark:bg-gray-700'
+              }`}
+              onContextMenu={(e) => msg.username === username && msg.messageId && handleMessageContextMenu(e, msg.messageId)}
+              onTouchStart={() => {
+                if (msg.username === username && msg.messageId) {
+                  const timer = setTimeout(() => {
+                    handleLongPress(msg.messageId!);
+                  }, 500);
+                  const cleanup = () => clearTimeout(timer);
+                  document.addEventListener('touchend', cleanup, { once: true });
+                  document.addEventListener('touchmove', cleanup, { once: true });
+                }
+              }}
+            >
+              <span className="block font-semibold mb-1 text-xs md:text-sm opacity-80">{msg.username}</span>
+              <span className="block mb-1">{msg.text}</span>
+              
+              <div className="flex items-center justify-end gap-1 mt-1">
+                <span className="text-[10px] md:text-xs opacity-60">
+                  {msg.isEdited && msg.editedAt 
+                    ? new Date(msg.editedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                    : new Date(msg.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
+                  }
+                </span>
+                {msg.isEdited && (
+                  <span className="text-[10px] md:text-xs opacity-60 italic">
+                    • Edited
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+      }
+    });
+
+    return result;
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full w-full">
@@ -340,60 +446,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username, room, password: i
             className="flex-1 overflow-y-auto max-h-[60vh] md:max-h-[calc(100vh-200px)] px-2 md:px-6 py-4 md:py-6 bg-transparent chat-scrollbar rounded-2xl"
           >
             <div className="space-y-4">
-              {messages.map((msg, index) =>
-                msg.type === 'notification' ? (
-                  <div
-                    key={index}
-                    className="flex justify-center"
-                  >
-                    <div className="bg-gradient-to-r from-indigo-200 to-purple-200 dark:from-gray-700 dark:to-gray-800 text-indigo-700 dark:text-gray-200 px-4 py-2 rounded-full text-xs md:text-sm font-medium shadow">
-                      {msg.text}
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    key={index}
-                    className={`flex flex-col ${msg.username === username ? 'items-end' : 'items-start'}`}
-                  >
-                    <div
-                      className={`relative p-3 rounded-2xl max-w-[85%] md:max-w-[70%] break-words shadow-lg text-xs md:text-base transition-all cursor-pointer ${
-                        msg.username === username
-                          ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
-                          : 'bg-gray-200 dark:bg-gray-700'
-                      }`}
-                      onContextMenu={(e) => msg.username === username && msg.messageId && handleMessageContextMenu(e, msg.messageId)}
-                      onTouchStart={() => {
-                        if (msg.username === username && msg.messageId) {
-                          const timer = setTimeout(() => {
-                            handleLongPress(msg.messageId!);
-                          }, 500);
-                          const cleanup = () => clearTimeout(timer);
-                          document.addEventListener('touchend', cleanup, { once: true });
-                          document.addEventListener('touchmove', cleanup, { once: true });
-                        }
-                      }}
-                    >
-                      <span className="block font-semibold mb-1 text-xs md:text-sm opacity-80">{msg.username}</span>
-                      <span className="block mb-1">{msg.text}</span>
-                      
-                      <div className="flex items-center justify-end gap-1 mt-1">
-                        <span className="text-[10px] md:text-xs opacity-60">
-                          {msg.isEdited && msg.editedAt 
-                            ? new Date(msg.editedAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-                            : new Date(msg.timestamp).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })
-                          }
-                        </span>
-                        {msg.isEdited && (
-                          <span className="text-[10px] md:text-xs opacity-60 italic">
-                            • Edited
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                  </div>
-                )
-              )}
+              {renderMessagesWithDates()}
               {typingUser && (
                 <div className="flex items-center gap-2 text-xs md:text-sm text-indigo-500 dark:text-indigo-300 font-medium animate-pulse pl-2">
                   <span className="font-semibold">{typingUser}</span> is typing...
