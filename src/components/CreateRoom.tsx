@@ -132,7 +132,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
 
   return (
     <div className="w-full max-w-6xl mx-auto flex items-center justify-center min-h-[calc(100vh-200px)] p-4">
-      <div className="grid lg:grid-cols-2 gap-12 w-full max-w-5xl">
+      <div className="grid lg:grid-cols-2 gap-8 w-full max-w-5xl">
         <div className="flex flex-col justify-center space-y-6 order-2 lg:order-1">
           <div className="text-center md:text-left">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
@@ -144,45 +144,43 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
           </div>
           
           <div className="grid gap-4">
-            <div className="flex items-start gap-4 p-5 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 border border-indigo-200 dark:border-indigo-800 shadow-sm">
-              <div className="p-3 bg-indigo-100 dark:bg-indigo-800 rounded-xl shadow-sm">
-                <PlusCircle className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800">
+              <div className="p-2 bg-indigo-100 dark:bg-indigo-800 rounded-lg">
+                <PlusCircle className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">Easy Setup</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">Create rooms in seconds with our simple interface</p>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-base">Easy Setup</h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300">Create rooms in seconds with our simple interface</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-5 rounded-xl bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border border-purple-200 dark:border-purple-800 shadow-sm">
-              <div className="p-3 bg-purple-100 dark:bg-purple-800 rounded-xl shadow-sm">
-                <Lock className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-purple-50 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800">
+              <div className="p-2 bg-purple-100 dark:bg-purple-800 rounded-lg">
+                <Lock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">Secure & Private</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">Password protection for private conversations</p>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-base">Secure & Private</h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300">Password protection for private conversations</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-4 p-5 rounded-xl bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border border-green-200 dark:border-green-800 shadow-sm">
-              <div className="p-3 bg-green-100 dark:bg-green-800 rounded-xl shadow-sm">
-                <Globe className="h-6 w-6 text-green-600 dark:text-green-400" />
+            <div className="flex items-start gap-4 p-4 rounded-lg bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800">
+              <div className="p-2 bg-green-100 dark:bg-green-800 rounded-lg">
+                <Globe className="h-5 w-5 text-green-600 dark:text-green-400" />
               </div>
               <div>
-                <h3 className="font-bold text-gray-900 dark:text-white mb-2 text-lg">Public or Private</h3>
-                <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">Choose between public rooms or private ones</p>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1 text-base">Public or Private</h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300">Choose between public rooms or private ones</p>
               </div>
             </div>
           </div>
         </div>
 
         <div className="flex items-center justify-center order-1 lg:order-2">
-          <Card className="shadow-2xl border-0 bg-white/95 dark:bg-gray-900/95 w-full max-w-lg backdrop-blur-sm">
-            <CardHeader className="flex flex-col items-center gap-4 text-center pb-8">
-           
-              
+          <Card className="shadow-lg border bg-white dark:bg-gray-900 w-full max-w-lg">
+            <CardHeader className="flex flex-col items-center gap-4 text-center pb-6">
               <div>
-                <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                <CardTitle className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                   Create New Room
                 </CardTitle>
                 <p className="text-gray-600 dark:text-gray-300">
@@ -190,7 +188,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
                 </p>
               </div>
             </CardHeader>
-            <CardContent className="px-8 pb-8">
+            <CardContent className="px-6 pb-6">
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="roomName" className="text-sm font-semibold text-gray-700 dark:text-gray-300">Room Name</Label>
@@ -201,7 +199,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
                     onChange={handleRoomNameChange}
                     autoComplete="on"
                     disabled={isCreating}
-                    className={`border-2 focus:ring-2 transition-all duration-300 ${errors.roomName
+                    className={`border-2 focus:ring-2 ${errors.roomName
                         ? 'border-red-300 focus:border-red-400 focus:ring-red-200 dark:border-red-600 dark:focus:border-red-500 dark:focus:ring-red-900'
                         : characterCount > MAX_ROOM_NAME_LENGTH
                           ? 'border-orange-300 focus:border-orange-400 focus:ring-orange-200 dark:border-orange-600 dark:focus:border-orange-500 dark:focus:ring-orange-900'
@@ -250,7 +248,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
                       onChange={handlePasswordChange}
                       autoComplete="on"
                       disabled={isCreating}
-                      className={`border-2 focus:ring-2 transition-all duration-300 ${errors.password
+                      className={`border-2 focus:ring-2 ${errors.password
                           ? 'border-red-300 focus:border-red-400 focus:ring-red-200 dark:border-red-600 dark:focus:border-red-500 dark:focus:ring-red-900'
                           : password.length > 20
                             ? 'border-orange-300 focus:border-orange-400 focus:ring-orange-200 dark:border-orange-600 dark:focus:border-orange-500 dark:focus:ring-orange-900'
@@ -276,7 +274,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
                   <Button
                     variant="outline"
                     onClick={onBack}
-                    className="flex-1 flex items-center gap-2 h-12 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-all duration-300"
+                    className="flex-1 flex items-center gap-2 h-11 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                     disabled={isCreating}
                   >
                     <ArrowLeft className="h-4 w-4" />
@@ -284,7 +282,7 @@ const CreateRoom: React.FC<CreateRoomProps> = ({ socket, onRoomCreated, onBack }
                   </Button>
                   <Button
                     onClick={handleCreate}
-                    className="flex-1 flex items-center gap-2 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300"
+                    className="flex-1 flex items-center gap-2 h-11 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold"
                     disabled={!canCreate}
                   >
                     <PlusCircle className="h-4 w-4" />
