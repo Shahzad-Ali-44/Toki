@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Github, Twitter, Mail, Code } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="w-full bg-gray-900 text-white">
       <div className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-3 mb-4">
@@ -34,77 +34,25 @@ const Footer: React.FC = () => {
               Connect with friends, family, and colleagues in real-time. Create private or public chat rooms 
               and enjoy seamless communication with our modern chat platform.
             </p>
-            <div className="flex items-center gap-4 mt-6">
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Github className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="h-5 w-5" />
-              </a>
-              <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                <Mail className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
           <div>
-            <h4 className="font-semibold text-lg mb-4">Quick Links</h4>
+            <h4 className="font-semibold text-lg mb-4">Features</h4>
             <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  About Us
-                </a>
+              <li className="text-gray-300 text-sm">
+                Real-time Messaging
               </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Features
-                </a>
+              <li className="text-gray-300 text-sm">
+                Public & Private Rooms
               </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  How it Works
-                </a>
+              <li className="text-gray-300 text-sm">
+                Message History
               </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Pricing
-                </a>
+              <li className="text-gray-300 text-sm">
+                Typing Indicators
               </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Support
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-lg mb-4">Legal & Support</h4>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Cookie Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Contact Us
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">
-                  Help Center
-                </a>
+              <li className="text-gray-300 text-sm">
+                Dark Mode Support
               </li>
             </ul>
           </div>
@@ -115,20 +63,16 @@ const Footer: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-sm text-gray-400">
-              <Sparkles className="h-4 w-4 text-yellow-400 animate-pulse" />
               <span>&copy; {currentYear} Toki. All rights reserved.</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
-              <span>Developed with</span>
-              <Code className="h-4 w-4 text-blue-400 animate-pulse" />
-              <span>by</span>
+            <div className="flex items-center gap-1 text-sm text-gray-400">
+              <span>Developed by</span>
               <a 
                 href="https://shahzadali.vercel.app/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
-              >
-                Shahzad Ali
+              >Shahzad Ali
               </a>
             </div>
           </div>

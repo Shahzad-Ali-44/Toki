@@ -20,11 +20,13 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
   const [joinType, setJoinType] = useState<'public' | 'private'>('public');
   const [errors, setErrors] = useState<{ username?: string; room?: string; password?: string }>({});
   const [joining, setJoining] = useState(false);
+  const [loadingRooms, setLoadingRooms] = useState(true);
 
   useEffect(() => {
     socket.emit('get_public_rooms');
     socket.on('public_rooms', (rooms) => {
       setPublicRooms(rooms);
+      setLoadingRooms(false);
     });
     socket.off('error');
     socket.off('message_history');
@@ -164,7 +166,12 @@ const JoinRoom: React.FC<JoinRoomProps> = ({ socket, onJoin, onBack }) => {
                 <div className="space-y-2">
                   <Label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Select a Public Room</Label>
                   <div className="flex flex-col gap-2 max-h-48 overflow-y-auto chat-scrollbar rounded-lg p-1 border border-gray-200 dark:border-gray-700" style={{ overflowX: 'hidden' }}>
-                    {publicRooms.length === 0 ? (
+                    {loadingRooms ? (
+                      <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 py-6">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-3"></div>
+                        <span className="font-medium">Loading public rooms...</span>
+                      </div>
+                    ) : publicRooms.length === 0 ? (
                       <div className="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 py-6">
                         <span className="text-3xl mb-2">😕</span>
                         <span className="font-medium">No public room available at this time</span>
